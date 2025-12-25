@@ -1,3 +1,5 @@
+# Deploy MySQL master and replicas using docker-compose
+```
 cd mysql_master_replica/build
 (.venv) ######@#####-MacBook-Pro build % docker-compose up -d 
 [+] Running 4/4
@@ -10,9 +12,14 @@ CONTAINER ID   IMAGE         COMMAND                  CREATED          STATUS   
 8e27d61e8f73   mysql:8.0.0   "docker-entrypoint.s…"   28 seconds ago   Up 28 seconds   0.0.0.0:3308->3306/tcp, [::]:3308->3306/tcp   mysql-replica2
 597a7806c953   mysql:8.0.0   "docker-entrypoint.s…"   28 seconds ago   Up 28 seconds   0.0.0.0:3307->3306/tcp, [::]:3307->3306/tcp   mysql-replica1
 f83e623b4ff9   mysql:8.0.0   "docker-entrypoint.s…"   28 seconds ago   Up 28 seconds   0.0.0.0:3306->3306/tcp, [::]:3306->3306/tcp   mysql-master
-
+```
 ## Debugging Help ##
+#### Check Docker Compose logs
+```
 docker compose logs -f 
+```
+#### Log into MySQL and run SQL Commands
+```
 (.venv) ####@####-MacBook-Pro build % docker exec -it mysql-master bash
 bash-4.4# mysql -u root -p
 Enter password: 
@@ -33,7 +40,6 @@ mysql> show databases;
 | Database           |
 +--------------------+
 | information_schema |
-| master_replicas_db |
 | mysql              |
 | performance_schema |
 | sys                |
@@ -52,15 +58,22 @@ mysql> exit;
 Bye
 bash-4.4# exit
 exit
-
-## Check MySQL version ##
+```
+### Check MySQL version
+```
 docker exec -it mysql-master mysql -V
-    mysql  Ver 8.0.35 for Linux on x86_64 (MySQL Community Server - GPL)
-## Set up replicas ##
+mysql  Ver 8.0.35 for Linux on x86_64 (MySQL Community Server - GPL)
+```
+### Set up replicas
+```
 sh setup-replicas.sh
-
+```
+### Write to Master
+```
 docker exec -i mysql-master mysql -uroot -proot123 < write-to-master.sql
+```
 ## READ FROM A REPLICA ##
+```
 (.venv) ####@####-MacBook-Pro build % docker exec -it mysql-replica1 bash
 bash-4.4# mysql -u root -p
 Enter password: 
@@ -116,9 +129,10 @@ mysql> exit
 Bye
 bash-4.4# exit
 exit
-
-## Replication Lag ##
+```
+### Replication Lag
+```
 (.venv) ####@####-MacBook-Pro build % docker exec mysql-replica1 mysql -uroot -proot123 -e "SHOW REPLICA STATUS\G" | grep "Seconds_Behind_Source"
 mysql: [Warning] Using a password on the command line interface can be insecure.
         Seconds_Behind_Source: 0
-
+```
