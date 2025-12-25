@@ -1,0 +1,9 @@
+[mysqld]
+server-id = 3
+
+read_only = 1
+
+log-bin = mysql-bin
+
+# To replicate a specific database
+# replicate-do-db = master_replicas_db

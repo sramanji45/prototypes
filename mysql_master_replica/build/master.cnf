@@ -1,0 +1,14 @@
+[mysqld]
+server-id = 1
+
+log-bin = mysql-bin
+
+binlog_format = ROW
+
+# To add a specific database - Not Tested
+# binlog-do-db = master_replicas_db
+
+# To add Semisynchronous Replication - Not Tested
+# plugin-load-add = semisync_master.so
+# rpl_semi_sync_master_enabled = 1
+# rpl_semi_sync_master_timeout = 10000 # -- Wait up to 10 seconds for ACK

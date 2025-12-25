@@ -1,0 +1,38 @@
+services:
+  mysql-master:
+    image: mysql:8.0.35
+    container_name: mysql-master
+    platform: linux/amd64 #For Apple M* processor
+    environment:
+      MYSQL_ROOT_PASSWORD: root123
+    volumes:
+      - ./master.cnf:/etc/mysql/conf.d/master.cnf
+      - ./init-master.sql:/docker-entrypoint-initdb.d/init-master.sql
+    ports:
+      - "3306:3306"
+
+  mysql-replica1:
+    image: mysql:8.0.35
+    container_name: mysql-replica1
+    platform: linux/amd64 #For Apple M* processor
+    environment:
+      MYSQL_ROOT_PASSWORD: root123
+    volumes:
+      - ./replica1.cnf:/etc/mysql/conf.d/replica1.cnf
+    depends_on:
+      - mysql-master
+    ports:
+      - "3307:3306"
+
+  mysql-replica2:
+    image: mysql:8.0.35
+    container_name: mysql-replica2
+    platform: linux/amd64 #For Apple M* processor
+    environment:
+      MYSQL_ROOT_PASSWORD: root123
+    volumes:
+      - ./replica2.cnf:/etc/mysql/conf.d/replica2.cnf
+    depends_on:
+      - mysql-master
+    ports:
+      - "3308:3306"
