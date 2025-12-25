@@ -7,3 +7,7 @@ log-bin = mysql-bin
 
 # To replicate a specific database
 # replicate-do-db = master_replicas_db
+
+# To add Semisynchronous Replication - Not Tested
+# plugin-load-add = semisync_slave.so
+# rpl_semi_sync_slave_enabled = 1
