@@ -1,0 +1,9 @@
+services:
+  app1:
+    build:
+      context: ..              # This makes 'app' the root for the build
+      dockerfile: build/Dockerfile
+    ports:
+      - "${PORT_1}:5000"
+    environment:
+      - INSTANCE_NAME=App_1
