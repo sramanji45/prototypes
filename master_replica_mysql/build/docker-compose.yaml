@@ -2,6 +2,8 @@ services:
   mysql-master:
     image: mysql:8.0.35
     container_name: mysql-master
+    networks:
+      - mysql-network  # Plugging into the network
     platform: linux/amd64 #For Apple M* processor
     environment:
       MYSQL_ROOT_PASSWORD: root123
@@ -14,6 +16,8 @@ services:
   mysql-replica1:
     image: mysql:8.0.35
     container_name: mysql-replica1
+    networks:
+      - mysql-network  # Plugging into the network
     platform: linux/amd64 #For Apple M* processor
     environment:
       MYSQL_ROOT_PASSWORD: root123
@@ -27,6 +31,8 @@ services:
   mysql-replica2:
     image: mysql:8.0.35
     container_name: mysql-replica2
+    networks:
+      - mysql-network  # Plugging into the network
     platform: linux/amd64 #For Apple M* processor
     environment:
       MYSQL_ROOT_PASSWORD: root123
@@ -36,3 +42,7 @@ services:
       - mysql-master
     ports:
       - "3308:3306"
+
+networks:
+  mysql-network: # Defining the network here
+    driver: bridge

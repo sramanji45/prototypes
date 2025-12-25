@@ -1,0 +1,56 @@
+datadir="/var/lib/proxysql"
+
+admin_variables=
+{
+    admin_credentials="admin:admin;radmin:radmin"
+    mysql_ifaces="0.0.0.0:6032"
+}
+
+mysql_variables=
+{
+    threads=4
+    max_connections=2048
+    default_query_delay=0
+    default_query_timeout=36000000
+    have_compress=true
+    poll_timeout=2000
+    interfaces="0.0.0.0:6033" # This is where App connects
+    default_schema="information_schema"
+    stacksize=1048576
+    connect_timeout_server=10000
+    monitor_username="replica_user" # ProxySQL uses this to 'ping' health
+    monitor_password="password123"
+}
+
+# Define your backend servers
+mysql_servers =
+(
+    { address="mysql-master", port=3306, hostgroup=10, max_connections=200 }, # HG 10 = WRITER
+    { address="mysql-replica1", port=3306, hostgroup=20, max_connections=200 }, # HG 20 = READER
+    { address="mysql-replica2", port=3306, hostgroup=20, max_connections=200 } # HG 20 = READER
+)
+
+# Define which users are allowed to connect through the proxy
+mysql_users:
+(
+    { username = "root", password = "root123", default_hostgroup = 10, active = 1 }
+)
+
+# Define the "Smart Rules" (Read/Write Splitting)
+mysql_query_rules:
+(
+    {
+        rule_id=1
+        active=1
+        match_pattern="^SELECT .* FOR UPDATE$"
+        destination_hostgroup=10 # SELECT FOR UPDATE must go to Master
+        apply=1
+    },
+    {
+        rule_id=2
+        active=1
+        match_pattern="^SELECT "
+        destination_hostgroup=20 # All other SELECTs go to Replica
+        apply=1
+    }
+)

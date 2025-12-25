@@ -1,0 +1,14 @@
+services:
+  proxysql:
+    image: proxysql/proxysql:latest
+    container_name: proxysql
+    ports:
+      - "6033:6033" # Client traffic (app connects here)
+      - "6032:6032" # Admin interface (configure ProxySQL here)
+    volumes:
+      - ./proxysql.cnf:/etc/proxysql.cnf
+    networks:
+      - build_mysql-network
+networks:
+  build_mysql-network: # Defining the network here
+    external: true # Network is created upon MySQL setup under master_replica_mysql
