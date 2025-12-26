@@ -1,5 +1,4 @@
-# user_service.py
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify
 
 user_app = Flask(__name__)
 
@@ -18,4 +17,4 @@ def get_user(user_id):
 
 if __name__ == '__main__':
     # We run the backend service on a different port
-    user_app.run(port=5001)
+    user_app.run(port=5003)
