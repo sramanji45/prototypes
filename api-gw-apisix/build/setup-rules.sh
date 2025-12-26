@@ -3,7 +3,7 @@ curl "http://127.0.0.1:9180/apisix/admin/routes/1" \
 -X PUT -d '
 {
   "uri": "/auth/*",
-  "name": "auth-service-route",
+  "name": "login-service-route",
   "upstream": {
     "type": "roundrobin",
     "nodes": {
