@@ -1,4 +1,6 @@
-(.venv) #####@#####-MacBook-Pro src % python -m pytest -vv test_app.py --durations 0
+### Running Unit Tests
+```aiignore
+$python -m pytest -vv test_app.py --durations 0
 ========================================================================= test session starts =========================================================================
 platform darwin -- Python 3.9.6, pytest-8.4.2, pluggy-1.6.0 -- /Users/#####/Projects/.venv/bin/python
 cachedir: .pytest_cache
@@ -14,4 +16,4 @@ test_app.py::test_cache_stampede_protection PASSED                              
 0.00s teardown test_app.py::test_cache_stampede_protection
 0.00s setup    test_app.py::test_cache_stampede_protection
 ========================================================================== 1 passed in 2.01s ==========================================================================
-(.venv) #####@#####-MacBook-Pro src % 
+``` 
