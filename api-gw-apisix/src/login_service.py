@@ -21,7 +21,7 @@ def generate_token(user_id, role):
     token = jwt.encode(payload, SECRET_KEY, algorithm="HS256")
     return token
 
-@login_app.route('/login', methods=['POST'])
+@login_app.route('/auth/login', methods=['POST'])
 def login():
     data = request.get_json()
     return jsonify({"Token": generate_token(data['user_id'], "admin")})

@@ -48,7 +48,7 @@ def catch_all(path):
         method = request.method
         data = request.get_data()
         resp = requests.request(method, target_url, headers=headers, data=data, params=request.args, timeout=5)
-        # Instead of using backend service headers directly to the client, api-gw should regenerate the correct headers
+        # Instead of using backend service headers directly to the client, api-gw-apisix should regenerate the correct headers
         excluded_headers = ['content-encoding', 'content-length', 'transfer-encoding', 'connection']
         headers = [(name, value) for name, value in resp.raw.headers.items() if name.lower() not in excluded_headers]
         return resp.content, resp.status_code, headers

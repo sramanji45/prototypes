@@ -1,0 +1,52 @@
+services:
+  # 1. Configuration Store for APISIX
+  etcd:
+    image: gcr.io/etcd-development/etcd:v3.5.0
+    networks:
+        - "apisix-network"
+    environment:
+      - ALLOW_NONE_AUTHENTICATION=yes
+      - ETCD_LISTEN_CLIENT_URLS=http://0.0.0.0:2379
+      - ETCD_ADVERTISE_CLIENT_URLS=http://etcd:2379
+    healthcheck:
+      test: [ "CMD", "etcdctl", "endpoint", "health" ]
+      interval: 5s
+      timeout: 2s
+      retries: 3
+    ports:
+      - "2379:2379"
+  # 2. The API Gateway
+  apisix:
+    image: apache/apisix:3.2.0-debian
+    restart: always # Crucial: APISIX will keep trying until ETCD is ready
+    networks:
+        - "apisix-network"
+    volumes:
+      - ./apisix_conf/config.yaml:/usr/local/apisix/conf/config.yaml
+    depends_on:
+      etcd:
+        condition: service_healthy # Wait until ETCD is "healthy"
+    ports:
+      - "9080:9080" # Standard Gateway port
+      - "9180:9180" # Admin API port
+  # 3. Login Service
+  login-service:
+    build:
+      context: ..
+      dockerfile: ./build/Dockerfile.login_service
+    networks:
+      - "apisix-network"
+    ports:
+      - "5001:5001"
+  # 4. Order Service
+  order-service:
+    build:
+      context: ..
+      dockerfile: ./build/Dockerfile.order_service
+    networks:
+      - "apisix-network"
+    ports:
+      - "5002:5002"
+networks:
+  apisix-network:
+    driver: bridge
