@@ -1,0 +1,9 @@
+[mysqld]
+server-id = 1
+log-bin = mysql-bin
+binlog_format = ROW
+
+# Crucial for Circular/Mesh:
+log_slave_updates = 1
+auto_increment_increment = 3
+auto_increment_offset = 1

@@ -1,0 +1,61 @@
+services:
+  mysql-shard1:
+    image: mysql:8.0.35
+    container_name: shard1-master
+    networks:
+      - mysql-network  # Plugging into the network
+    platform: linux/amd64 #For Apple M* processor
+    environment:
+      MYSQL_ROOT_PASSWORD: root123
+    volumes:
+      - ./shard1-config.cnf:/etc/mysql/conf.d/config.cnf
+      - ./init-replication.sql:/docker-entrypoint-initdb.d/init.sql
+    ports:
+      - "33061:3306"
+
+  mysql-shard2:
+    image: mysql:8.0.35
+    container_name: shard2-master
+    networks:
+      - mysql-network  # Plugging into the network
+    platform: linux/amd64 #For Apple M* processor
+    environment:
+      MYSQL_ROOT_PASSWORD: root123
+    volumes:
+      - ./shard2-config.cnf:/etc/mysql/conf.d/config.cnf
+      - ./init-replication.sql:/docker-entrypoint-initdb.d/init.sql
+    depends_on:
+      - mysql-shard1
+    ports:
+      - "33062:3306"
+
+  mysql-shard3:
+    image: mysql:8.0.35
+    container_name: shard3-master
+    networks:
+      - mysql-network  # Plugging into the network
+    platform: linux/amd64 #For Apple M* processor
+    environment:
+      MYSQL_ROOT_PASSWORD: root123
+    volumes:
+      - ./shard3-config.cnf:/etc/mysql/conf.d/config.cnf
+      - ./init-replication.sql:/docker-entrypoint-initdb.d/init.sql
+    depends_on:
+      - mysql-shard2
+    ports:
+      - "33063:3306"
+
+  proxysql:
+    image: proxysql/proxysql:latest
+    container_name: proxysql
+    ports:
+      - "6033:6033" # Client traffic (app connects here)
+      - "6032:6032" # Admin interface (configure ProxySQL here)
+    volumes:
+      - ./proxysql.cnf:/etc/proxysql.cnf
+    networks:
+      - mysql-network
+
+networks:
+  mysql-network: # Defining the network here
+    driver: bridge

@@ -1,0 +1,1 @@
+docker exec proxysql mysql -uadmin -padmin -h 127.0.0.1 -P 6032 -e "SELECT srv_host, queries FROM stats_mysql_connection_pool;"
