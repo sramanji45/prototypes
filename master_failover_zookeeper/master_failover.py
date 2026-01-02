@@ -16,21 +16,21 @@ while True:
         print(f"ZooKeeper not ready yet:{e}. Retrying in 2s...")
         time.sleep(2)
 
-def master_logic():
-    print("I am the Master")
+def master_logic(hostname):
+    print(f"I am the Master:{hostname}")
     while True:
         # Perform Master duties here
         time.sleep(5)
 
 def run_election(event=None):
+    hostname = socket.gethostname()
     try:
         # 2. Attempt to become Master
-        hostname = socket.gethostname()
         print(f"Aspring to become master:{hostname}")
         zk.create("/master", hostname.encode('utf-8'), ephemeral=True)
-        master_logic()
+        master_logic(hostname)
     except NodeExistsError:
-        print("Master is elected already. Standing by...")
+        print(f"Master is elected already. Standing by:{hostname}")
         # 3. Watch the master node
         if zk.exists("/master", watch=run_election):
             print("Watching Master...")
