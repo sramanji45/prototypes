@@ -1,0 +1,25 @@
+services:
+  zookeeper:
+    image: zookeeper:3.8
+    networks:
+      - zk-net
+    ports:
+      - "2181:2181"
+
+  worker:
+    build:
+      context: ..
+      dockerfile: build/Dockerfile
+    depends_on:
+      - zookeeper
+    environment:
+      - ZK_HOSTS=zookeeper:2181
+      - PYTHONUNBUFFERED=1
+    networks:
+      - zk-net
+    deploy:
+      replicas: 2
+
+networks:
+  zk-net:
+    driver: bridge
