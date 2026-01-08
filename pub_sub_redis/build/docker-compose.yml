@@ -1,0 +1,29 @@
+services:
+  redis:
+    image: redis:7.2-alpine
+    container_name: redis-proto
+    volumes:
+      - redis-data:/data
+    ports:
+        - "6379:6379"
+    networks:
+      - redis-pubsub-net
+
+  app:
+    build:
+      context: ..
+      dockerfile: build/Dockerfile
+    container_name: app-sub
+    environment:
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - PYTHONUNBUFFERED=1 # Needed for unbuffered logs
+    networks:
+      - redis-pubsub-net
+
+volumes:
+  redis-data:
+
+networks:
+  redis-pubsub-net:
+    driver: bridge
