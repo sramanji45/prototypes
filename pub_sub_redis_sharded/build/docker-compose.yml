@@ -1,0 +1,55 @@
+services:
+  redis-node-1:
+    image: redis:7.2-alpine
+    container_name: redis-node-1
+    command: [ "redis-server", "--cluster-enabled", "yes", "--cluster-config-file", "nodes.conf", "--cluster-node-timeout", "5000", "--appendonly", "yes" ]
+    ports:
+      - "6371:6379"
+    volumes:
+      - node1-data:/data
+    networks:
+      - redis-cluster-net
+
+  redis-node-2:
+    image: redis:7.2-alpine
+    container_name: redis-node-2
+    command: [ "redis-server", "--cluster-enabled", "yes", "--cluster-config-file", "nodes.conf", "--cluster-node-timeout", "5000", "--appendonly", "yes" ]
+    ports:
+      - "6372:6379"
+    volumes:
+      - node2-data:/data
+    networks:
+      - redis-cluster-net
+
+  redis-node-3:
+    image: redis:7.2-alpine
+    container_name: redis-node-3
+    command: [ "redis-server", "--cluster-enabled", "yes", "--cluster-config-file", "nodes.conf", "--cluster-node-timeout", "5000", "--appendonly", "yes" ]
+    ports:
+      - "6373:6379"
+    volumes:
+      - node3-data:/data
+    networks:
+      - redis-cluster-net
+
+  app:
+    build:
+      context: ..
+      dockerfile: build/Dockerfile
+    container_name: app-sub
+    restart: always
+    environment:
+      - REDIS_HOST=redis-node-1
+      - REDIS_PORT=6379
+      - PYTHONUNBUFFERED=1 # Needed for unbuffered logs
+    networks:
+      - redis-cluster-net
+
+volumes:
+  node1-data:
+  node2-data:
+  node3-data:
+
+networks:
+  redis-cluster-net:
+    driver: bridge
