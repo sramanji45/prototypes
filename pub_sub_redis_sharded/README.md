@@ -33,6 +33,15 @@ CONTAINER ID   IMAGE              COMMAND                  CREATED          STAT
 e2b7cd8df370   redis:7.2-alpine   "docker-entrypoint.s…"   11 minutes ago   Up 11 minutes   0.0.0.0:6373->6379/tcp, [::]:6373->6379/tcp   redis-node-3
 8589faba480b   redis:7.2-alpine   "docker-entrypoint.s…"   11 minutes ago   Up 11 minutes   0.0.0.0:6371->6379/tcp, [::]:6371->6379/tcp   redis-node-1
 ```
+### Clear all redis data before running cluster command
+```aiignore
+docker exec -it redis-node-1 redis-cli FLUSHALL
+docker exec -it redis-node-1 redis-cli CLUSTER RESET HARD
+docker exec -it redis-node-2 redis-cli FLUSHALL
+docker exec -it redis-node-2 redis-cli CLUSTER RESET HARD
+docker exec -it redis-node-3 redis-cli FLUSHALL
+docker exec -it redis-node-3 redis-cli CLUSTER RESET HARD
+```
 
 ### Create redis cluster
 ```aiignore
@@ -101,15 +110,6 @@ $docker exec -it redis-node-1 redis-cli PUBSUB SHARDNUMSUB orders
 2) (integer) 1
 ```
 
-### Clear all redis data when we bring down and bring up redis nodes
-```aiignore
-docker exec -it redis-node-1 redis-cli FLUSHALL
-docker exec -it redis-node-1 redis-cli CLUSTER RESET HARD
-docker exec -it redis-node-2 redis-cli FLUSHALL
-docker exec -it redis-node-2 redis-cli CLUSTER RESET HARD
-docker exec -it redis-node-3 redis-cli FLUSHALL
-docker exec -it redis-node-3 redis-cli CLUSTER RESET HARD
-```
 
 ### Publish data to Channels
 ```aiignore
@@ -135,5 +135,9 @@ app-sub       |
 app-sub       | Received STOP signal, Shutting down gracefully...
 app-sub       | 
 app-sub       | Stopping threads gracefully...
-app-sub exited with code 137
+app-sub       | Thread cleaned up and closed.
+app-sub       | Thread cleaned up and closed.
+app-sub       | 
+app-sub       | Stopping threads gracefully...
+app-sub exited with code 0
 ```

@@ -44,10 +44,14 @@ class ShardedRedisPubSub:
 
     def _listen_thread(self, pubsub, callback):
         print(f"Listening on {pubsub}")
-        while not self.stop_event.is_set():
-            for message in pubsub.listen():
-                if message['type'] == 'message':
+        while not self.stop_event.is_set(): # Use the event to control the loop
+            try:
+                message = pubsub.get_message(ignore_subscribe_messages=True, timeout=1.0)
+                if message and message['type'] == 'message':
                     callback(message)
+            except Exception as e:
+                print(f"Error in listener: {e}")
+                break
         pubsub.close()
         print("Thread cleaned up and closed.")
 
